@@ -15,4 +15,8 @@ Then navigate to [http://localhost:9999/](http://localhost:9999) in a browser.
 
 Saved annotations will be written to the `annotations/` directory (which will be created if it didn't previously exist).
 
+## License
+
+Everything here is public domain, or CC0 licensed (a public domain equivalent).
+Do whatever you want with any of it, with or without attribution.
 
