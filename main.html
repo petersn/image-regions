@@ -75,8 +75,15 @@ $("#canv").mousemove(function(e) {
 
 function submit() {
 	var data = document.getElementById("canv").toDataURL();
-	$.post("submit", {image_path: "%(image)s", image_data: data}, function(reply) {
-		console.log(reply);
+	$.ajax({
+		type: "POST",
+		url: "submit",
+		data: {image_path: "%(image)s", image_data: data},
+		dataType: "json",
+		success: function(reply) {
+			if (reply["do_reload"])
+				location.reload();
+		}
 	});
 }
 		</script>

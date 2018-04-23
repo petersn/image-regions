@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, re, glob, urlparse, random, BaseHTTPServer, SimpleHTTPServer
+import os, re, json, glob, urlparse, random, BaseHTTPServer, SimpleHTTPServer
 
 if not os.path.exists("annotations"):
 	os.mkdir("annotations")
@@ -50,6 +50,15 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler, object):
 		data = self.rfile.read(int(self.headers["Content-Length"]))
 		desc = urlparse.parse_qs(data)
 		save_annotation(desc)
+
+		response = json.dumps({
+			"do_reload": True,
+		})
+		self.send_response(200)
+		self.send_header("Content-Length", str(len(response)))
+		self.send_header("Content-Type", "application/json")
+		self.end_headers()
+		self.wfile.write(response)
 
 if __name__ == "__main__":
 	BaseHTTPServer.HTTPServer(("", 9999), Handler).serve_forever()
