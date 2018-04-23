@@ -8,7 +8,7 @@ Currently everything is horrifically fragile w.r.t. to file names and escaping, 
 The simply run:
 
 ```
-	$ python label_server.py
+$ python label_server.py
 ```
 
 Then navigate to [http://localhost:9999/](http://localhost:9999) in a browser.
