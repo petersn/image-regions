@@ -1,0 +1,84 @@
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<style>
+#reference_image {
+	display: none;
+}
+#column {
+	text-align: center;
+}
+#canv_container {
+	outline: 2px solid black;
+	background-image: url("%(image)s");
+	display: inline-block;
+}
+#canv {
+	opacity: 0.3;
+}
+		</style>
+	</head>
+	<body>
+		<img id="reference_image" src="%(image)s" onload="set_sizing();"></img>
+		<div id=column>
+			<p>Annotate the image. Click to draw, ctrl + click to erase.</p>
+			<p>
+				<div id=canv_container>
+					<canvas id="canv"></canvas>
+				</div>
+			</p>
+			<p>
+				<button onclick="submit();">Submit</button>
+			</p>
+		</div>
+
+		<script>
+function set_sizing() {
+	var img = $("#reference_image");
+	var canv = document.getElementById("canv");
+	canv.width = img.width();
+	canv.height = img.height();
+}
+
+ctx = document.getElementById("canv").getContext("2d");
+var paint = false;
+var prev_xy;
+function get_xy(t, e) {
+	return [e.pageX - t.offsetLeft, e.pageY - t.offsetTop];
+}
+$("#canv").mousedown(function(e) {
+	prev_xy = get_xy(this, e);
+	paint = true;
+});
+$("#canv").mouseup(function(e) { paint = false; });
+$("#canv").mouseleave(function(e) { paint = false; });
+$("#canv").mousemove(function(e) {
+	if (!paint)
+		return;
+	new_xy = get_xy(this, e);
+	ctx.lineJoin = "round";
+	ctx.lineCap = "round";
+	ctx.lineWidth = 30;
+	ctx.strokeStyle = "#f00";
+	ctx.globalCompositeOperation = "source-over";
+	if (e.ctrlKey) {
+		ctx.lineWidth = 35;
+		ctx.strokeStype = "#fff";
+		ctx.globalCompositeOperation = "destination-out";
+	}
+	ctx.beginPath();
+	ctx.moveTo(prev_xy[0], prev_xy[1]);
+	ctx.lineTo(new_xy[0], new_xy[1]);
+	ctx.stroke();
+	prev_xy = new_xy;
+});
+
+function submit() {
+	var data = document.getElementById("canv").toDataURL();
+	$.post("submit", {image_path: "%(image)s", image_data: data}, function(reply) {
+		console.log(reply);
+	});
+}
+		</script>
+	</body>
+</html>
